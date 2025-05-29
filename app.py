@@ -1,28 +1,36 @@
+# ========== IMPORTANT: PAGE CONFIG MUST BE FIRST ==========
 import streamlit as st
+st.set_page_config(
+    page_title="Smart Resume Ranker", 
+    layout="wide",
+    page_icon="🧠"
+)
+
+# ========== REST OF IMPORTS ==========
 import fitz  # PyMuPDF
 import nltk
 import re
+import os
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-import os
 
 # ========== FIX FOR NLTK DATA ==========
 @st.cache_resource
 def load_nltk_data():
-    # Create nltk_data directory if it doesn't exist
+    # Create nltk_data directory in current working directory
     nltk_data_path = os.path.join(os.getcwd(), 'nltk_data')
     os.makedirs(nltk_data_path, exist_ok=True)
     
-    # Set NLTK data path
+    # Add to NLTK data path
     nltk.data.path.append(nltk_data_path)
     
     # Download required NLTK data
     nltk.download('punkt', download_dir=nltk_data_path)
     nltk.download('stopwords', download_dir=nltk_data_path)
     nltk.download('wordnet', download_dir=nltk_data_path)
-    nltk.download('omw-1.4', download_dir=nltk_data_path)  # Required for lemmatization
+    nltk.download('omw-1.4', download_dir=nltk_data_path)
 
 # Load NLTK data at startup
 load_nltk_data()
@@ -63,9 +71,7 @@ def calculate_similarity(resume_text, job_desc):
         st.error(f"Similarity calculation error: {str(e)}")
         return 0.0
 
-# ========== STREAMLIT UI ==========
-st.set_page_config(page_title="Smart Resume Ranker", layout="wide")
-
+# ========== CUSTOM CSS ==========
 st.markdown("""
 <style>
     .stButton>button {
@@ -79,6 +85,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# ========== MAIN APP ==========
 st.markdown("<h1 style='text-align: center; color: white; background-color: #2a5298; padding: 1rem; border-radius: 10px;'>🧠 Smart Resume Ranker & Analysis</h1>", unsafe_allow_html=True)
 
 with st.sidebar:
