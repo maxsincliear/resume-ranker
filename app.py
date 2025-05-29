@@ -18,22 +18,21 @@ from nltk.stem import WordNetLemmatizer
 
 # ========== FIX FOR NLTK DATA ==========
 @st.cache_resource
-def load_nltk_data():
-    # Create nltk_data directory in current working directory
+def load_nltk_resources():
     nltk_data_path = os.path.join(os.getcwd(), 'nltk_data')
     os.makedirs(nltk_data_path, exist_ok=True)
-    
-    # Add to NLTK data path
-    nltk.data.path.append(nltk_data_path)
-    
-    # Download required NLTK data
+
+    # Ensure nltk uses this path
+    if nltk_data_path not in nltk.data.path:
+        nltk.data.path.append(nltk_data_path)
+
+    # Download required resources
     nltk.download('punkt', download_dir=nltk_data_path)
     nltk.download('stopwords', download_dir=nltk_data_path)
     nltk.download('wordnet', download_dir=nltk_data_path)
     nltk.download('omw-1.4', download_dir=nltk_data_path)
 
-# Load NLTK data at startup
-load_nltk_data()
+load_nltk_resources()
 
 # ========== PDF READING ==========
 def read_pdf(file):
@@ -50,7 +49,7 @@ def read_pdf(file):
 def preprocess_text(text):
     try:
         text = text.lower()
-        text = re.sub(r'[^a-z\s]', '', text)
+        text = re.sub(r'[^a-z\s]', ' ', text)
         tokens = nltk.word_tokenize(text)
         stop_words = set(stopwords.words("english"))
         tokens = [w for w in tokens if w not in stop_words]
@@ -134,3 +133,4 @@ if st.button("🔍 Analyze & Match", type="primary"):
 
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: 14px;'>Project developed by <b>Vikas Jaipal</b> & <b>Sudha Koushal</b> — 3rd Year IT | Engineering College Bikaner</p>", unsafe_allow_html=True)
+
